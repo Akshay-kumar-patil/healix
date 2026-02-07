@@ -1,11 +1,10 @@
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
 import logging
 from app.config import Config
 
 _embeddings = None
 
-def embedding():
+def embedding_model():
     """Create and persist ChromaDB vector store"""
 
     global _embedding
