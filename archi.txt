@@ -1,0 +1,45 @@
+self_healing_rag/
+│
+├── app/
+│   ├── main.py                ← entry point
+│   ├── config.py
+│
+├── ingestion/
+│   ├── loader.py
+│   ├── chunking.py
+│   ├── embedding.py
+│   ├── pipeline.py
+│
+├── retrieval/
+│   ├── retriever.py
+│   ├── reranker.py
+│
+├── orchestrator/
+│   ├── controller.py
+│   ├── query_rewriter.py
+│
+├── self_healing/
+│   ├── validator.py
+│   ├── retry_handler.py
+│   ├── fallback.py
+│
+├── llm/
+│   ├── prompt_templates.py
+│   ├── generator.py
+│
+├── memory/              (optional but sexy)
+│   ├── conversation_store.py
+│
+├── evaluation/
+│   ├── metrics.py
+│
+├── utils/
+│   ├── logger.py
+│   ├── helpers.py
+│
+├── data/
+│
+├── vector_store/
+│
+├── .env
+├── requirements.txt
