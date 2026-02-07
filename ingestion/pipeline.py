@@ -19,7 +19,7 @@ def execute_ingestion(source,type):
         elif type=="url":
             documents=url_loader(source)
         
-        elif type=="docx";
+        elif type=="docx":
             documents = load_docx(source)
 
         if not documents:
@@ -31,7 +31,7 @@ def execute_ingestion(source,type):
         chunks=chunk_documents(documents)
 
         if not chunks:
-            raise ValueError{"Chunking failed"}
+            raise ValueError("Chunking failed")
 
         logging.info(f"{len(chunks)} chunks created")
 
