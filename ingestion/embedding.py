@@ -7,9 +7,10 @@ _embeddings = None
 def embedding_model():
     """Create and persist ChromaDB vector store"""
 
-    global _embedding
-    if _embedding is not None:
-        return _embedding
+    global _embeddings
+    if _embeddings is not None:
+        logging.info("Using cached embedding model")
+        return _embeddings
 
     try:
         logging.info("Loading embedding model...")
@@ -21,7 +22,7 @@ def embedding_model():
         )
 
         logging.info("Embedding model laoded successfully.")
-        return _embedding
+        return _embeddings
     
     except Exception as e:
         logging.error(f"Embedding model failed: {e}")
