@@ -21,6 +21,15 @@ def chunk_documents(documents):
 
     logging.info(f"Createrd {len(chunks)} chunks")
 
+    # filtering out the chunks that are too small
+    original_count=len(chunks)
+
     chunks= [c for c in chunks if len(c.page_content)>100]
+
+    if len(chunks)< original_count:
+        filtered_count=original_count-len(chunks)
+        logging.info(f"Filtered out {filtered_count} chunks (<100).  {len(chunks)} chunks remaining.")
+
+        
     return chunks
 
