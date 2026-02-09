@@ -6,7 +6,14 @@ class Config:
 
     # Rag settings
     CHUNK_SIZE=1000
+    CHUNKING_OVERLAP=150
     TOP_K=5
+    DEVICE = "cuda"
+    MODEL_CACHE_DIR = "./models"
+
+    # retrival 
+    CHROMA_DIR="vectore_store"
+    SEARCH_TYPE="similarity"
 
     # reliability setting
     RETRY_COUNT=3
