@@ -32,7 +32,7 @@ Your Answer:"""
 # for medical / technical domain
 
 RAG_PROMPT_MEDICAL = """You are a medical information assistant. Provide accurate answers based strictly on the medical context provided.
-
+        
 IMPORTANT:
 - Answer ONLY from the context below
 - If information is incomplete or missing, state this clearly
