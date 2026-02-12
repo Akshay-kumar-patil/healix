@@ -14,7 +14,7 @@ class Config:
     # retrival 
     CHROMA_DIR="vectore_store"
     SEARCH_TYPE="similarity"
-
+    CROSS_ENCODER_MODEL="cross-encoder/ms-marco-MiniLM-L-6-v2"
     # reliability setting
     RETRY_COUNT=3
     SIMILARITY_THRESHOLD =0.75
