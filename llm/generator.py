@@ -63,7 +63,7 @@ def generate_answer_with_sources(query,documents):
         context_parts=[]
         sources=[]
 
-        for i, doc in documents:
+        for i, doc in enumerate(documents,start=1):
             source=doc.metadata.get("source", "unknown")
             page=doc.metadata.get("page","N/A")
 
