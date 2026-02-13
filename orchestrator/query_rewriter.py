@@ -14,7 +14,7 @@ def should_rewrite_query(query):
         query.lower().startwith(("what about","tell me about", "how about")),
         "it" in query.lower() and len(query.split())<5,
         "this" in query.lower() and len(query.split())<5,
-        "thar" in query.lower() and len(query.split())<5,
+        "that" in query.lower() and len(query.split())<5,
     ]
 
     is_vague=any(vague_indicator)
