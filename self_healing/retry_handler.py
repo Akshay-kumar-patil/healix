@@ -1,6 +1,5 @@
 import logging
 import time
-from typing import Callable,Any
 from orchestrator.query_rewriter import expand_query
 
 def retry_with_backoff(func,max_attempts=3,inital_delay=1.0,backoff_factor=2.0,*args,**kwargs):
