@@ -1,14 +1,14 @@
 self_healing_rag/
 │
 ├── app/
-│   ├── main.py                ← entry point
+│   ├── main.py                
 │   ├── config.py
 │
 ├── ingestion/
 │   ├── loader.py
 │   ├── chunking.py
 │   ├── embedding.py
-|   ├── vectordb.py
+│   ├── vectordb.py
 │   ├── pipeline.py
 │
 ├── retrieval/
@@ -28,7 +28,7 @@ self_healing_rag/
 │   ├── prompt_templates.py
 │   ├── generator.py
 │
-├── memory/              (optional but sexy)
+├── memory/              
 │   ├── conversation_store.py
 │
 ├── evaluation/
