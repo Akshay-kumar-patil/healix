@@ -4,9 +4,7 @@ from retrieval.reranker import rerank_documents
 from llm.generator import generate_answer_with_sources
 from orchestrator.query_rewriter import should_rewrite_query, rewrite_query, expand_query
 from app.config import Config
-
-
-_conversation_history=[]
+from memory.conversation_store import get_conversation_history,add_exchange,get_context_for_llm,resolve_references,create_session,get_current_session_id
 
 def process_query(query,enable_reranking=True,max_retries=None):
     """ processes a user query through the entire RAG pipeline"""
@@ -20,6 +18,9 @@ def process_query(query,enable_reranking=True,max_retries=None):
             "original_query": query
         }
     
+    if not get_current_session_id():
+        create_session()
+
     logging.info("=" * 80)
     logging.info(f" PROCESSING QUERY: {query}")
     logging.info("=" * 80)
@@ -27,6 +28,11 @@ def process_query(query,enable_reranking=True,max_retries=None):
     original_query=query
     max_retries=max_retries or Config.MAX_RETRIES
     attempt=0
+
+    query = resolve_references(query)
+    logging.info(f"Resolved query: '{query}'")
+
+    conversation_context = get_context_for_llm(last_n=3)
 
     while attempt<max_retries:
         attempt+=1;
@@ -37,7 +43,8 @@ def process_query(query,enable_reranking=True,max_retries=None):
             # stage1: Query Analysis
             if should_rewrite_query(query):
                 logging.info("Query needs improvement")
-                query=rewrite_query(query,conversation_history=_conversation_history)
+                history = get_conversation_history(last_n=3)
+                query=rewrite_query(query,history)
             else:
                 logging.info("No re writing needed. query is good")
 
@@ -53,6 +60,11 @@ def process_query(query,enable_reranking=True,max_retries=None):
                     query=expand_query(query)
                     continue
                 else:
+                    add_exchange(
+                        query=original_query,
+                        answer="I couldn't find relevant information.",
+                        metadata={"status": "no_results"}
+                    )
                     return{
                         "answer":"I couldn't find any relevant documents",
                         "sources":[],
@@ -100,11 +112,17 @@ def process_query(query,enable_reranking=True,max_retries=None):
 
             logging.info("Query processed successfully")
             
-            _conversation_history.append({
-                "query":original_query,
-                "processed_query": query,
-                "answer":response["answer"]
-            })
+            add_exchange(
+                query=original_query,
+                answer=response["answer"],
+                metadata={
+                    "sources": response["sources"],
+                    "status": "success",
+                    "quality_score": quality_score,
+                    "attempts": attempt,
+                    "processed_query": query
+                }
+            )
 
             return {
                 "answer":response["answer"],
@@ -190,14 +208,6 @@ def validate_answer(query,answer,documents):
     logging.info(f"Answer validation passed (overlap: {match_ratio:.2%})")
     return True
 
-def get_conversation_history():
-    return _conversation_history.copy()
-
-def clear_conversation_history():
-    global _conversation_history
-    _conversation_history=[]
-    logging.info("Conversation history cleared")
-
 
 def process_simple_query(query):
     """Simplified query processing without retries or validation"""
@@ -224,6 +234,7 @@ def process_simple_query(query):
         result=generate_answer_with_sources(query,documents)
 
         result["status"]="success"
+        add_exchange(query=query, answer=result["answer"])
 
         return result
     

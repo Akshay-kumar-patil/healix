@@ -1,6 +1,7 @@
 import logging 
 import google.generativeai as genai
 from app.config import Config
+from memory.conversation_store import get_context_for_llm, get_last_query
 from llm.prompt_templates import QUERY_REWRITE_PROMPT
 
 def should_rewrite_query(query):
@@ -11,7 +12,7 @@ def should_rewrite_query(query):
     
     vague_indicator=[
         len(query.split())<3,
-        query.lower().startwith(("what about","tell me about", "how about")),
+        query.lower().startswith(("what about","tell me about", "how about")),
         "it" in query.lower() and len(query.split())<5,
         "this" in query.lower() and len(query.split())<5,
         "that" in query.lower() and len(query.split())<5,
@@ -30,7 +31,7 @@ def rewrite_query(query, conversation_history=None):
     if not query:
         logging.error("Empty query provided")
         return query
-    logging.info("Rewriting query: '{query}")
+    logging.info(f"Rewriting query: '{query}'")
 
 
     try:
@@ -38,11 +39,14 @@ def rewrite_query(query, conversation_history=None):
         genai.configure(api_key=Config.GEMINI_API_KEY)
         model=genai.GenerativeModel(model=Config.GEMINI_MODEL)
 
-        context=[]
+        
         if conversation_history:
-            recent=conversation_history[-5:]
-            context="\n".join([f"previous Q:{item['query']}\n previous A: {[item['answer'][:100]]}" for item in recent])
-
+            context = "\n".join([
+                f"Previous Q: {item['query']}\nPrevious A: {item['answer'][:100]}..."
+                for item in conversation_history[-3:]
+            ])
+        else:
+            context=get_context_for_llm(last_n=3)
         if context:
             prompt = f"""Previous conversation:
 {context}
@@ -59,7 +63,7 @@ Original Query: {query}
 
 Rewritten Query:"""
             
-        response=model.generate_content(context)
+        response=model.generate_content(prompt)
         rewritten=response.text.strip()
 
         if not rewritten or len(rewritten)<3:
@@ -82,15 +86,18 @@ def expand_query(query):
         logging.error("Empty query provided")
         return query
     
+    last_topic = get_last_query()
     try:
         genai.configure(api_key=Config.GEMINI_API_KEY)
         model=genai.GenerativeModel(model=Config.GEMINI_MODEL)
 
-        prompt=f"""Expand this query by adding relevant synonyms and related terms for better document retrieval.
+        context_hint = f"\nPrevious topic: {last_topic}" if last_topic else ""
+        
+        prompt = f"""Expand this query with relevant synonyms and related terms for better document retrieval.{context_hint}
 
 Original query: {query}
 
-Expanded query (keep it concise, under 20 words):"""
+Expanded query (under 20 words):"""
         
         response=model.generate_content(prompt)
         expanded=response.text.strip()
