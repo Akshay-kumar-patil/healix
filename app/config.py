@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 class Config:
     
     MODEL_NAME="model/gemini-2.5-flash"
@@ -19,5 +23,14 @@ class Config:
     RETRY_COUNT=3
     SIMILARITY_THRESHOLD =0.75
 
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    GEMINI_MODEL = "gemini-2.0-flash-exp"
     TEMPERATURE=0.3
     MAX_TOKENS=1500
+
+    MAX_RETRIES = 2 
+    QUALITY_THRESHOLD = 0.3 
+
+    # Orchestrator settings
+    MAX_RETRIES = 2
+    QUALITY_THRESHOLD = 0.3
