@@ -1,14 +1,9 @@
 # LangChain Core
 langchain
 langchain-core
-
-# OpenAI Integration
-# langchain-openai
-# openai
-
 # Anthropic Integration
 langchain-anthropic
-pip install langchain-community
+langchain-community
 
 # Google Gemini (PaLM) Integration
 langchain-google-genai
@@ -33,4 +28,7 @@ loguru
 
 pypdf
 python-docx
-    unstructured
+unstructured
+torch
+
+sentence-transformers
