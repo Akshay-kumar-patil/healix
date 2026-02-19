@@ -1,0 +1,85 @@
+┌─────────────────────────────────────────────────────────────────┐
+│                    USER ASKS QUESTION                           │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  MEMORY LAYER - Check conversation history                      │
+│  ✓ Resolve references ("it", "this", "that")                    │
+│  ✓ Get conversation context                                     │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  ORCHESTRATOR - Main Brain                                      │
+│  ✓ Analyzes query quality                                       │
+│  ✓ Decides if rewriting needed                                  │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  QUERY REWRITER (if needed)                                     │
+│  ✓ Makes vague queries specific                                 │
+│  ✓ Uses conversation history for context                        │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  RETRIEVAL - Find relevant documents                            │
+│  ✓ Search vector database                                       │
+│  ✓ Get top K documents                                          │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  RERANKER - Improve retrieval quality                           │
+│  ✓ Use Cross-Encoder model                                      │
+│  ✓ Re-sort by true relevance                                    │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  VALIDATOR - Check retrieval quality                            │
+│  ✓ Calculate quality score                                      │
+│  ✓ Decide if good enough                                        │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+                    Is Quality OK?
+                    ┌────┴────┐
+                   NO         YES
+                    ↓           ↓
+        ┌──────────────────┐   │
+        │ RETRY HANDLER    │   │
+        │ ✓ Expand query   │   │
+        │ ✓ Try again      │   │
+        └─────────┬────────┘   │
+                  ↓             │
+            (Back to Retrieval) │
+                                ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  LLM GENERATOR - Create answer                                  │
+│  ✓ Use Gemini 2.0 Flash                                         │
+│  ✓ Answer ONLY from context                                     │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  VALIDATOR - Check answer quality                               │
+│  ✓ Verify grounded in documents                                 │
+│  ✓ Check for hallucinations                                     │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+                   Is Answer Valid?
+                    ┌────┴────┐
+                   NO         YES
+                    ↓           ↓
+        ┌──────────────────┐   │
+        │ RETRY or         │   │
+        │ FALLBACK         │   │
+        └─────────┬────────┘   │
+                  ↓             │
+            (Try again or       │
+             provide fallback)  │
+                                ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  MEMORY - Store exchange                                        │
+│  ✓ Save query + answer                                          │
+│  ✓ Update conversation history                                  │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│           RETURN ANSWER + SOURCES TO USER                       │
+└─────────────────────────────────────────────────────────────────┘
