@@ -9,3 +9,4 @@ evaluation\__pycache__
 retrieval\__pycache__
 memory\__pycache__
 data\__pycache__
+vector_store\chroma_db
