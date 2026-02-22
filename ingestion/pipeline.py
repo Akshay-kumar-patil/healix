@@ -29,16 +29,16 @@ def execute_ingestion(source: Union[str,List[str]],doc_type:str,persist_director
 
         
         # 1. Loading
-        if type=="pdf":
+        if doc_type=="pdf":
             documents=load_pdf(source)
         
-        elif type=="csv":
+        elif doc_type=="csv":
             documents=load_csv(source)
         
-        elif type=="url":
+        elif doc_type=="url":
             documents=load_url(source)
         
-        elif type=="docx":
+        elif doc_type=="docx":
             documents = load_docx(source)
 
         if not documents:
@@ -62,10 +62,10 @@ def execute_ingestion(source: Union[str,List[str]],doc_type:str,persist_director
 
 
         #3. vectore db
-        logging.ingo("Stage 3/3  vector store")
+        logging.info("Stage 3/3  vector store")
         stage_time=time.time()
 
-        vector_store=create_vectordb(chunks=chunks,persists_directory=persist_directory)
+        vector_store=create_vectordb(chunks=chunks,persist_directory=persist_directory)
         stage_time=time.time()-stage_start
         
         logging.info(f"Ingestion pipeline completed successfully in {stage_time}s" )
@@ -107,7 +107,7 @@ def validate_pipeline_health():
         health["vector_store_dir"]=os.path.exists(persist_dir)
 
         if health["vector_store_dir"]:
-            logging.enfo(f"Vectore store directory exists: {persist_dir}")
+            logging.info(f"Vectore store directory exists: {persist_dir}")
 
         else:
             logging.warning(f"vector store directory not found: {persist_dir}")
