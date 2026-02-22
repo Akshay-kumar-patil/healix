@@ -18,7 +18,7 @@ def embedding_model():
         _embeddings=HuggingFaceEmbeddings(
             model_name=Config.EMBEDDING_MODEL,
             model_kwargs={"device":Config.DEVICE},
-            encode_kwargs={"normalize_embedding":True}
+            encode_kwargs={"normalize_embeddings":True}
         )
 
         logging.info("Embedding model laoded successfully.")
