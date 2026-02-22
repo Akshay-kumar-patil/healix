@@ -3,7 +3,7 @@ from ingestion.embedding import embedding_model
 import logging
 import os
 
-def create_vectordb(chunks,persists_directory=None):
+def create_vectordb(chunks,persist_directory=None):
 
     if not chunks:
         raise ValueError("No Chunks provided.")
@@ -23,7 +23,7 @@ def create_vectordb(chunks,persists_directory=None):
             documents=chunks,
             embedding=embeddings,
             collection_metadata={"hnsw:space": "cosine"},
-            persist_directory=persists_directory
+            persist_directory=persist_directory
         )
 
         logging.info("vectore store created successfully")
