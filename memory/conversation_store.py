@@ -11,7 +11,7 @@ def create_session(session_id=None):
 
     global _current_session_id
 
-    if not _current_session_id:
+    if not session_id:
         session_id =f"session_{datetime.now().strftime('%y%m%d_%H%M%S')}"
     
     _conversations[session_id]={
@@ -44,14 +44,14 @@ def add_exchange(query,answer,session_id=None,metadata=None):
         create_session(session_id)
 
     exchange={
-        "turn": len(_conversations[session_id]["exchanges"]) + 1,
+        "turn": len(_conversations[session_id]["exchange"]) + 1,
         "timestamp": datetime.now().isoformat(),
         "query": query,
         "answer": answer,
         "metadata": metadata or {}
     }
 
-    _conversations[session_id]["exchanges"].append(exchange)
+    _conversations[session_id]["exchange"].append(exchange)
 
     logging.info(f"Exchange added to session {session_id} (Turn {exchange['turn']})")
     return True
@@ -65,10 +65,10 @@ def get_conversation_history(session_id=None,last_n=None):
         logging.warning("No conversation history found")
         return []
 
-    exchanges=_conversations[session_id]["exchanges"]
+    exchanges=_conversations[session_id]["exchange"]
     
     if last_n and last_n>0:
-        exchanges=exchanges[-last_n]
+        exchanges=exchanges[-last_n:]
 
     return exchanges
 
@@ -158,7 +158,7 @@ def clear_all_session():
     count=len(_conversations)
     _conversations={}
     _current_session_id=None
-    logging.info("Cleared {count} sessions")
+    logging.info(f"Cleared {count} sessions")
 
 def get_session_summary(session_id=None):
     """get a summary of the currect session"""
@@ -190,7 +190,7 @@ def save_session_to_file(file_path,session_id=None):
         return False
     
     try:
-        os.mkdir(os.path.dirname(file_path),exist_ok=True)
+        os.makedirs(os.path.dirname(file_path),exist_ok=True)
 
         with open(file_path, 'w') as f:
             json.dump(_conversations[session_id],f,indent=2)
