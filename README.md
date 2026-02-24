@@ -127,11 +127,10 @@ If validation fails:
 | Component | Technology |
 |--------|------|
 | Language | Python |
-| Framework | LlamaIndex / LangChain |
+| Framework | LangChain |
 | Vector DB | Chroma |
-| LLM | OpenAI / Gemini / Local |
-| UI | Streamlit / FastAPI |
-| Logging | Loguru |
+| LLM | Gemini / Local |
+| Logging | Logging |
 | Config | dotenv + pydantic |
 
 ---
