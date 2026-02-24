@@ -12,12 +12,12 @@ def create_session(session_id=None):
     global _current_session_id
 
     if not session_id:
-        session_id =f"session_{datetime.now().strftime('%y%m%d_%H%M%S')}"
+        session_id =f"session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     
     _conversations[session_id]={
         "session_id":session_id,
         "created_at":datetime.now().isoformat(),
-        "exchange":[],
+        "exchanges":[],
         "metadata":{}
     }
 
@@ -44,14 +44,14 @@ def add_exchange(query,answer,session_id=None,metadata=None):
         create_session(session_id)
 
     exchange={
-        "turn": len(_conversations[session_id]["exchange"]) + 1,
+        "turn": len(_conversations[session_id]["exchanges"]) + 1,
         "timestamp": datetime.now().isoformat(),
         "query": query,
         "answer": answer,
         "metadata": metadata or {}
     }
 
-    _conversations[session_id]["exchange"].append(exchange)
+    _conversations[session_id]["exchanges"].append(exchange)
 
     logging.info(f"Exchange added to session {session_id} (Turn {exchange['turn']})")
     return True
@@ -65,7 +65,7 @@ def get_conversation_history(session_id=None,last_n=None):
         logging.warning("No conversation history found")
         return []
 
-    exchanges=_conversations[session_id]["exchange"]
+    exchanges=_conversations[session_id]["exchanges"]
     
     if last_n and last_n>0:
         exchanges=exchanges[-last_n:]
