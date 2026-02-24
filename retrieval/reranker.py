@@ -11,6 +11,7 @@ def rerank_documents(query,documents,top_n=None):
         return []
     
     if not query:
+        print("No query provided, returning original documents")
         logging.warning("No query provided, returning original documents")
         return documents
     
@@ -65,7 +66,7 @@ def calculate_relevance_score(query,content):
     consecutive_matches=0
     for i in range(len(query_word)-1):
         if query_word[i] in content_lower and query_word[i+1] in content_lower:
-            consecutive_matchesc +=1
+            consecutive_matches +=1
 
     scores+=consecutive_matches *3.0
 
@@ -106,6 +107,7 @@ def rerank_with_cross_encoder(query,documents,model_name=Config.CROSS_ENCODER_MO
         if top_n:
             reranked=reranked[:top_n]
 
+        print("Cross-Encoder reranking complete")
         logging.info(f"Cross-Encoder reranking complete")
         return reranked
     
@@ -115,6 +117,7 @@ def rerank_with_cross_encoder(query,documents,model_name=Config.CROSS_ENCODER_MO
         return rerank_documents(query, documents, top_n)                                        
     
     except Exception as e:
+        print(f"Cross-Encoder reranking failed: {e}")
         logging.error(f"Cross-Encoder reranking failed: {e}")
         return documents
     
