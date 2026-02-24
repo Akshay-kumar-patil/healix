@@ -1,6 +1,7 @@
 from langchain_chroma import Chroma
 from ingestion.embedding import embedding_model
 import logging
+from app.config import Config
 import os
 
 def create_vectordb(chunks,persist_directory=None):
@@ -9,7 +10,7 @@ def create_vectordb(chunks,persist_directory=None):
         raise ValueError("No Chunks provided.")
     
     if persist_directory is None:
-        persist_directory = os.path.join("vector_store", "chroma_db")
+        persist_directory = os.path.join(Config.CHROMA_DIR, "chroma_db")
 
     os.makedirs(persist_directory,exist_ok=True)
 
@@ -39,10 +40,10 @@ def load_vectordb(persist_directory=None):
     """loading existing ChromaDB vectore store"""
 
     if persist_directory is None:
-        persist_directory=os.path.join("vectore_store","chroma_db")
+        persist_directory=os.path.join("vector_store","chroma_db")
 
     if not os.path.exists(persist_directory):
-        raise FileExistsError(
+        raise FileNotFoundError(
             f"Vectore store not found at {persist_directory}"
             "Please run ingetion pipeline first"
         )
