@@ -103,7 +103,7 @@ def validate_pipeline_health():
 
     
     try:
-        persist_dir=os.path.join("vectore_store","chroma_db")
+        persist_dir=os.path.join("vector_store","chroma_db")
         health["vector_store_dir"]=os.path.exists(persist_dir)
 
         if health["vector_store_dir"]:
