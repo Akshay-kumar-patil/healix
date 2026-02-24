@@ -1,8 +1,8 @@
 import logging
 from llm.prompt_templates import RAG_PROMPT
+from google.genai import types
 from app.config import Config
-import google.generativeai as genai
-
+from google import genai
 def generate_answer(query, context):
     """generatesw answer from gemini """
 
@@ -17,27 +17,27 @@ def generate_answer(query, context):
     logging.info("Generating answer for your query")
 
     try:
-        genai.configure(api_key=Config.GEMINI_API_KEY)
+        client = genai.Client(api_key=Config.GEMINI_API_KEY)
 
-        model=genai.GenerativeModel(
-            model=Config.GEMINI_MODEL,
-            generation_config={
-                "temperature":Config.TEMPERATURE,
-                "top_p":0.95,
-                "top_k":40,
-                "max_output_tokens":1024,
-            }
-        )
-
-        prompt=RAG_PROMPT.format(
+        prompt = RAG_PROMPT.format(
             context=context,
             question=query
         )
-
+        
         logging.debug(f"Prompt length: {len(prompt)} characters")
 
-        respone=model.generate_content(prompt)
-        answer=respone.text
+        response = client.models.generate_content(
+            model=Config.GEMINI_MODEL,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=Config.TEMPERATURE,
+                top_p=0.95,
+                top_k=40,
+                max_output_tokens=1024,
+            ),
+        )
+
+        answer=response.text
 
         logging.info("Answer generated Successfully")
         logging.debug(f"Answer prevview: {answer[:100]}...")
