@@ -125,7 +125,7 @@ def get_file_info(file_path):
         "modified": time.ctime(stat.st_mtime)
     }
 
-def safe_divide(numerator,denominator,default:0.0):
+def safe_divide(numerator, denominator, default=0.0): 
     """safe division that returns default value if denominator is zero"""
 
     try:
@@ -143,7 +143,7 @@ def retry_on_failure(max_retries=3,delay=1.0):
         def wrapper(*args,**kwargs):
             last_exception=None
 
-            for attempt in len(max_retries):
+            for attempt in range(max_retries):
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
@@ -152,8 +152,8 @@ def retry_on_failure(max_retries=3,delay=1.0):
                         time.sleep(delay)
             
             raise last_exception
-        raise wrapper
-    raise decorator
+        return wrapper
+    return decorator
 
 def format_sources(sources):
     """format source citations nicely"""
