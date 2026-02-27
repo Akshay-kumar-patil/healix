@@ -1,6 +1,6 @@
 import logging
 from app.config import Config
-import google.generativeai as genai
+from google import genai
 
 def validate_retrieval_quality(query,documents, min_score=0.3):
     """Validate if retrived documents are good eouugh"""
@@ -105,8 +105,7 @@ def validate_with_llm(query,answer,context):
     logging.info("Running LLM-based Validation...")
 
     try:
-        genai.configure(api_key=Config.GEMINI_API_KEY)
-        model=genai.GenerativeModel(model_name=Config.GEMINI_MODEL)
+        client = genai.Client(api_key=Config.GEMINI_API_KEY)
 
         validation_prompt=f"""You are a validation assistant. Determine if the answer directly addresses the question using ONLY the provided context.
 
@@ -121,7 +120,10 @@ Respond with ONLY: VALID or INVALID
 
 Response:"""
         
-        response=model.generate_content(validation_prompt)
+        response = client.models.generate_content(
+            model=Config.GEMINI_MODEL,
+            contents=validation_prompt,
+        )
         result_text=response.text.strip().upper()
 
         is_valid="VALID" in result_text
