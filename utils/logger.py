@@ -58,7 +58,7 @@ def set_log_level(level):
 
 def disable_external_loggers():
     """Disable verbose logging from external libraries"""
-    noisy_logers=[
+    noisy_loggers=[
         "httpx",
         "httpcore",
         "chromadb",
@@ -67,8 +67,8 @@ def disable_external_loggers():
         "urllib3"
     ]
 
-    for logger_name in noisy_logers:
-        logging.getLogger(logger_name).setLevel(logging.warning)
+    for logger_name in noisy_loggers:
+        logging.getLogger(logger_name).setLevel(logging.WARNING)
 
     logging.info("External library loggers suppressed")
 
