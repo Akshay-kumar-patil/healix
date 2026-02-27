@@ -1,5 +1,6 @@
 import logging
 import time
+import traceback
 from orchestrator.query_rewriter import expand_query
 
 def retry_with_backoff(func,max_attempts=3,inital_delay=1.0,backoff_factor=2.0,*args,**kwargs):
@@ -21,6 +22,7 @@ def retry_with_backoff(func,max_attempts=3,inital_delay=1.0,backoff_factor=2.0,*
         except Exception as e:
             last_exception=e
             logging.warning(f"Attempt {attempt} failed: {e}")
+            traceback.print_exc() 
 
             if attempt<max_attempts:
                 logging.info(f"retrying in {delay:.1f}s...")
@@ -47,6 +49,7 @@ def retry_with_modifications(func,modify_func,max_attempts=3,inital_delay=1.0,ba
 
             result=func(*current_args,**current_kwargs)
             logging.info(f"Success on attempt {attempt}")
+            return result
 
         except Exception as e:
             logging.warning(f"Attempt {attempt} failed: {e}")
@@ -70,7 +73,7 @@ def retry_retrieval(query,retrieval_func,max_attempt=3):
         try:
             documents =retrieval_func(current_query)
 
-            if documents:
+            if documents is not None and len(documents) > 0:
                 logging.info(f"Retrieved {len(documents)} documents on attempt {attempt}")
                 return documents
             
@@ -114,36 +117,36 @@ def retry_generation(query, context, generation_func,max_attempts=2):
             
         except Exception as e:
             logging.exception(f"Generation attempt {attempt} failed: {e}")
+            traceback.print_exc()
 
             if attempt>=max_attempts:
                 return "I encountered an error while generating the answer."
         
-        return "Failed to generate answer after multiple attempts"
+    return "Failed to generate answer after multiple attempts"
     
-    def should_retry(validation_result):
-        """Determine if a retry is warranted based on validation"""
-        if not validation_result:
-            return False
-        
-        if validation_result.get("is_valid",False):
-            logging.info("Validation passed - no retry needed")
-            return False
-        
-        confidence=validation_result.get("confidence",0)
+def should_retry(validation_result):
+    """Determine if a retry is warranted based on validation"""
+    if not validation_result:
+        return False
+    
+    if validation_result.get("is_valid",False):
+        logging.info("Validation passed - no retry needed")
+        return False
+    
+    confidence=validation_result.get("confidence",0)
 
-        if confidence<0.3:
-            logging.info(f"Low confidence ({confidence:.2f}) - retyr recommended")
-            return True
-        
-        issues=validation_result.get("issues",[])
-
-        no_retry_issues=["No source documents","Honest 'don't know' response"  ]
-
-        for issue in issues:
-            if any(no_retry in issue for no_retry in no_retry_issues):
-                logging.info(f"issue '{issue}' -retry not helpful")
-                return False
-            
-
-        logging.info("Validation failed -retry recommended")
+    if confidence<0.3:
+        logging.info(f"Low confidence ({confidence:.2f}) - retyr recommended")
         return True
+    
+    issues=validation_result.get("issues",[])
+
+    no_retry_issues=["No source documents","Honest 'don't know' response"  ]
+
+    for issue in issues:
+        if any(no_retry in issue for no_retry in no_retry_issues):
+            logging.info(f"issue '{issue}' -retry not helpful")
+            return False
+        
+    logging.info("Validation failed -retry recommended")
+    return True
