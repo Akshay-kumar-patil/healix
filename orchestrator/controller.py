@@ -1,5 +1,5 @@
 import logging
-from retrieval.retriever import retrieve_documents, prepare_context_for_llm
+from retrieval.retriever import retriever_documents, prepare_context_for_llm
 from retrieval.reranker import rerank_documents
 from llm.generator import generate_answer_with_sources
 from orchestrator.query_rewriter import should_rewrite_query, rewrite_query, expand_query
@@ -50,7 +50,7 @@ def process_query(query,enable_reranking=True,max_retries=None):
 
             # stage2: Retrival
             logging.info("retrival stage...")
-            documents=retrieve_documents(query,Config.TOP_K)
+            documents=retriever_documents(query,Config.TOP_K)
 
             if not documents:
                 logging.warning("No documents retrived")
@@ -158,17 +158,17 @@ def check_retrieval_quality(query,documents):
     if not documents:
         return 0.0
     
-    query_tems=set(query.lower().split())
+    query_terms=set(query.lower().split())
 
     scores=[]
     for doc in documents:
         content_lower=doc.page_content.lower()
 
-        matches=sum(1 for term in query_tems if term in content_lower)
-        score=matches/len(query_tems) if scores else 0
-        scores.append(scores)
+        matches=sum(1 for term in query_terms if term in content_lower)
+        score=matches/len(query_terms) if len(query_terms)>0 else 0
+        scores.append(score)
         
-    avg_score=sum(scores)/len(scores) if scores else 0
+    avg_score=sum(scores)/len(scores) if len(scores) >0 else 0
     return avg_score
 
 
@@ -222,7 +222,7 @@ def process_simple_query(query):
     logging.info(f"Processing simple query: {query}")
 
     try:
-        documents=retrieve_documents(query,top_k=5)
+        documents=retriever_documents(query,top_k=5)
 
         if not documents:
             return{
