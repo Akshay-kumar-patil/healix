@@ -1,5 +1,5 @@
 import logging 
-import google.generativeai as genai
+from google import genai
 from app.config import Config
 from memory.conversation_store import get_context_for_llm, get_last_query
 from llm.prompt_templates import QUERY_REWRITE_PROMPT
@@ -36,8 +36,7 @@ def rewrite_query(query, conversation_history=None):
 
     try:
 
-        genai.configure(api_key=Config.GEMINI_API_KEY)
-        model=genai.GenerativeModel(model=Config.GEMINI_MODEL)
+        client = genai.Client(api_key=Config.GEMINI_API_KEY)
 
         
         if conversation_history:
@@ -63,7 +62,10 @@ Original Query: {query}
 
 Rewritten Query:"""
             
-        response=model.generate_content(prompt)
+        response = client.models.generate_content(
+            model=Config.GEMINI_MODEL,
+            contents=prompt,
+        )
         rewritten=response.text.strip()
 
         if not rewritten or len(rewritten)<3:
@@ -88,8 +90,7 @@ def expand_query(query):
     
     last_topic = get_last_query()
     try:
-        genai.configure(api_key=Config.GEMINI_API_KEY)
-        model=genai.GenerativeModel(model=Config.GEMINI_MODEL)
+        client = genai.Client(api_key=Config.GEMINI_API_KEY)
 
         context_hint = f"\nPrevious topic: {last_topic}" if last_topic else ""
         
@@ -99,7 +100,7 @@ Original query: {query}
 
 Expanded query (under 20 words):"""
         
-        response=model.generate_content(prompt)
+        response=client.models.generate_content(contents=prompt,model=Config.GEMINI_MODEL)
         expanded=response.text.strip()
 
         logging.info(f"Query expanded to: '{expanded}'")
