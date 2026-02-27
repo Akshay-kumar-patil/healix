@@ -15,7 +15,7 @@ def retriever_documents(query,top_K=None):
 
     # loading the vetore db
     try:
-        vector_store_path= os.path.join("vectore_store","chroma_db")
+        vector_store_path= os.path.join("vector_store","chroma_db")
 
         if not os.path.exists(vector_store_path):
             logging.error(f"Vector store not found! please run ingetion first")
@@ -69,7 +69,7 @@ def retriver_with_scores(query,top_k=None):
     logging.info(f"Searching with scores for: '{query}'")
         
     try: 
-        vector_store_path=os.path.join("vector_store","chroma_db")
+        vector_store_path = os.path.join(Config.CHROMA_DIR, "chroma_db")
         embedding=embedding_model()
 
         vector_db=Chroma(
@@ -131,4 +131,4 @@ def prepare_context_for_llm(documents):
             f"{doc.page_content}\n"
         )
 
-        return "\n".join(context)
+    return "\n".join(context)
