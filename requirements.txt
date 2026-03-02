@@ -27,6 +27,7 @@ tiktoken
 loguru
 
 pypdf
+docx2txt
 python-docx
 unstructured
 torch
