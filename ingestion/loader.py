@@ -94,7 +94,7 @@ def load_csv(path):
     logging.info(f"laoding the csv file {path}")
 
     try:
-        loader=CSVLoader(path=path)
+        loader=CSVLoader(file_path=path)
         data=loader.load()
 
         logging.info("Successfully loaded the csv file")
