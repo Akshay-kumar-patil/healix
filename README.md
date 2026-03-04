@@ -91,6 +91,28 @@ self_healing_rag/
 ```
 
 ---
+## Local Development Setup
+1.-Clone the repository
+---
+git clone https://github.com/Akshay-kumar-patil/healix
+cd healix
+---
+2.-Create and activate virtual environment
+---
+python -m venv .venv
+.\.venv\Scripts\Activate
+---
+---
+3.-Install dependencies
+---
+pip install -r requirements.txt
+---
+
+
+---
+
+
+---
 
 ## ⚙️ How It Works
 
