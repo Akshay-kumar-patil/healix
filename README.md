@@ -93,40 +93,46 @@ self_healing_rag/
 ---
 ## Local Development Setup
 
-1.-Clone the repository
+1-Clone the repository
 
 ```
 git clone https://github.com/Akshay-kumar-patil/healix
 cd healix
 ```
 
-2.-Create and activate virtual environment
+2-Create and activate virtual environment
 ```
 python -m venv .venv
 .\.venv\Scripts\Activate
 ```
 
+3-Create file .env
+```
+GEMINI_API_KEY="ADD YOUR GEMINI API KEY"
+<!-- or you can choose your own suitable model. -->
+```
 
 
-3.-Install dependencies
+
+4.-Install dependencies
 
 ```
 pip install -r requirements.txt
 ```
 
-4.-Run ingestion pipeline
+5.-Run ingestion pipeline
 
 ```
 python -m app.main --ingest
 ```
 
-5-Run interactive chat
+6-Run interactive chat
 
 ```
 python -m app.main --chat
 ```
 
-6-Chat with performance tracking
+7-Chat with performance tracking
 
 ```
 python -m app.main --chat --evaluate
