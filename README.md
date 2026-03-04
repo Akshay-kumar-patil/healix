@@ -97,7 +97,6 @@ self_healing_rag/
 
 ```
 git clone https://github.com/Akshay-kumar-patil/healix
-
 cd healix
 ```
 
@@ -106,20 +105,29 @@ cd healix
 python -m venv .venv
 .\.venv\Scripts\Activate
 ```
-```
+
+
+
 3.-Install dependencies
+
 ```
 pip install -r requirements.txt
 ```
+
 4.-Run ingestion pipeline
+
 ```
 python -m app.main --ingest
 ```
+
 5-Run interactive chat
+
 ```
 python -m app.main --chat
 ```
+
 6-Chat with performance tracking
+
 ```
 python -m app.main --chat --evaluate
 ```
